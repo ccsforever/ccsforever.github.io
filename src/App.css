@@ -1,6 +1,11 @@
 .App {
   text-align: center;
 }
+@media (max-width: 800px) {
+  .App {
+    background-color: tomato;
+  }
+}
 
 .App-logo {
   height: 40vmin;
