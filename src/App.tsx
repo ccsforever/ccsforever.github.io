@@ -37,7 +37,7 @@ const App = () => {
       <div>
         <Unity
           unityProvider={unityProvider}
-          style={{ visibility: isLoaded ? "visible" : "hidden" }}
+          style={{ visibility: isLoaded ? "visible" : "hidden", width: '1500px', height: '800px' }}
         // style={{width: '1500px', height: '800px'}}
         // style={{width: 'auto', height: 'auto'}}
         />
