@@ -5,7 +5,9 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 import "./App.css";
 
 const App = () => {
-  const [isRotate, setIsRotate] = useState(false)
+  const [isActive, setIsActive] = useState(false);
+  const [number, setNumber] = useState(0);
+
   const { unityProvider, loadingProgression, isLoaded, sendMessage } = useUnityContext({
     loaderUrl: "output.loader.js",
     dataUrl: "output.data",
@@ -26,12 +28,28 @@ const App = () => {
         />
       </div>
       <button onClick={() => {
-        const rotate = !isRotate;
-        sendMessage("rotate", rotate ? "ture" : "false");
-        setIsRotate(rotate);
+        const active = !isActive;
+        sendMessage("active", active ? "ture" : "false");
+        setIsActive(active);
       }}>
-        {isRotate ? "stop" : "rotate"}
+        {isActive ? "stop" : "active"}
       </button>
+
+      <button onClick={() => {
+        const changedNumber = number + 1;
+        sendMessage("number", changedNumber.toString());
+        setNumber(changedNumber);
+      }}>
+        {`+`}
+      </button>
+      <button onClick={() => {
+        const changedNumber = number - 1;
+        sendMessage("number", changedNumber.toString());
+        setNumber(changedNumber);
+      }}>
+        {`-`}
+      </button>
+      {number}
     </div>
   );
 }
