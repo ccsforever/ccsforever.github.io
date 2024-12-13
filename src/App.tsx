@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 import "./App.css";
@@ -8,12 +8,27 @@ const App = () => {
   const [isActive, setIsActive] = useState(false);
   const [number, setNumber] = useState(0);
 
-  const { unityProvider, loadingProgression, isLoaded, sendMessage } = useUnityContext({
+  const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnityContext({
     loaderUrl: "output.loader.js",
     dataUrl: "output.data",
     frameworkUrl: "output.framework.js",
     codeUrl: "output.wasm",
   });
+
+  const sendToken = useCallback(() => {
+    sendMessage('Trigger', 'RecieveUnity', 'nice');
+  }, [sendMessage]);
+
+  useEffect(() => {
+    if (unityProvider) {
+      addEventListener('GoToUnity', sendToken);
+      return () => {
+        removeEventListener('GoToUnity', sendToken);
+      };
+    }
+  }, [unityProvider, sendToken, addEventListener, removeEventListener]);
+
+
   return (
     <div className='App'>
       {!isLoaded && (
@@ -29,7 +44,7 @@ const App = () => {
       </div>
       <button onClick={() => {
         const active = !isActive;
-        sendMessage("active", active ? "ture" : "false");
+        sendMessage("Square", "toggleRotate");
         setIsActive(active);
       }}>
         {isActive ? "stop" : "active"}
