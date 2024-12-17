@@ -3,12 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 import "./App.css";
+import { ReactUnityEventParameter } from 'react-unity-webgl/distribution/types/react-unity-event-parameters';
 
 const App = () => {
   const [isActive, setIsActive] = useState(false);
-  const [number, setNumber] = useState(0);
+  const [speed, setSpeed] = useState(30.0);
 
-  const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnityContext({
+  const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener, UNSAFE__detachAndUnloadImmediate: detachAndUnloadImmediate } = useUnityContext({
     loaderUrl: "output.loader.js",
     dataUrl: "output.data",
     frameworkUrl: "output.framework.js",
@@ -19,14 +20,34 @@ const App = () => {
     sendMessage('Trigger', 'RecieveUnity', 'nice');
   }, [sendMessage]);
 
+  const setSpeedUp = useCallback((...speedParameters: ReactUnityEventParameter[]) => {
+    const curSpeed = speedParameters[0] as number;
+    const value = speedParameters[1] as number;
+    setSpeed(curSpeed + value);
+  }, []);
+
+  const setSpeedDown = useCallback((...speedParameters: ReactUnityEventParameter[]) => {
+    const curSpeed = speedParameters[0] as number;
+    const value = speedParameters[1] as number;
+    setSpeed(curSpeed - value);
+  }, []);
+
   useEffect(() => {
     if (unityProvider) {
       addEventListener('GoToUnity', sendToken);
+      addEventListener("reactSpeedUp", setSpeedUp);
+      addEventListener("reactSpeedDown", setSpeedDown);
       return () => {
+        detachAndUnloadImmediate().catch((reason) => {
+          console.log(reason);
+        });
+        removeEventListener("reactSpeedUp", setSpeedUp);
+        removeEventListener("reactSpeedDown", setSpeedDown);
         removeEventListener('GoToUnity', sendToken);
       };
     }
-  }, [unityProvider, sendToken, addEventListener, removeEventListener]);
+
+  }, [unityProvider, addEventListener, removeEventListener, detachAndUnloadImmediate, sendToken, setSpeedUp, setSpeedDown]);
 
 
   return (
@@ -51,23 +72,21 @@ const App = () => {
       </button>
 
       <button onClick={() => {
-        const changedNumber = number + 1;
-        sendMessage("number", changedNumber.toString());
-        setNumber(changedNumber);
+        setSpeed(speed + 1.0);
       }}>
         {`+`}
       </button>
       <button onClick={() => {
-        const changedNumber = number - 1;
-        sendMessage("number", changedNumber.toString());
-        setNumber(changedNumber);
+        setSpeed(speed - 1.0);
       }}>
         {`-`}
       </button>
-      {number}
+      {speed}
+      <button onClick={() => {
+        sendMessage("Square", "setSpeed", speed);
+      }}>apply</button>
     </div>
   );
 }
 
 export default App;
-
