@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using UnityEngine.UI;
 using TMPro;
 
-public class Trigger : MonoBehaviour
+public class Query : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void GoToUnity();
@@ -14,7 +14,7 @@ public class Trigger : MonoBehaviour
 
     void Start()
     {
-        token.text = "bad";
+        token.text = "Query";
 #if UNITY_WEBGL == true && UNITY_EDITOR == false
         GoToUnity();
 #endif
