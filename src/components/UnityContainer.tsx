@@ -23,7 +23,7 @@ const UnityContainer = (props: UnityContainerProps) => {
     const sendToken = useCallback(() => {
         sendMessage('Path', 'RecieveUnity', path);
         sendMessage('Query', 'RecieveUnity', query);
-    }, [sendMessage]);
+    }, [sendMessage, path, query]);
 
     const setSpeedUp = useCallback((...speedParameters: ReactUnityEventParameter[]) => {
         const curSpeed = speedParameters[0] as number;
