@@ -11,7 +11,7 @@ const Product = () => {
   const query = serchParams.get("search") as string;
 
   return (
-    <div className="asdf">
+    <div className="Product">
       <UnityContainer path={`${path}/${id as string}/`} query={query} />
     </div>
   );
